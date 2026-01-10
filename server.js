@@ -114,6 +114,9 @@ io.on("connection", socket => {
   socket.on("stopTyping", () => socket.broadcast.emit("stopTyping"));
 });
 
-server.listen(process.env.PORT, () =>
-  console.log("Server running on", process.env.PORT)
-);
+const PORT = parseInt(process.env.PORT) || 3000; // fallback to 3000 locally
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
