@@ -34,7 +34,7 @@ const Message = mongoose.model("Message", new mongoose.Schema({
 
 
 /* SIGNUP */
-app.post("/api/signup", async (req, res) => {
+app.post("https://momn-2pn6.onrender.com", async (req, res) => {
   const { email, password } = req.body;
 
   const count = await User.countDocuments();
@@ -49,7 +49,7 @@ app.post("/api/signup", async (req, res) => {
 });
 
 /* LOGIN */
-app.post("/api/login", async (req, res) => {
+app.post("https://momn-2pn6.onrender.com", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) return res.sendStatus(401);
@@ -62,13 +62,13 @@ app.post("/api/login", async (req, res) => {
 });
 
 /* USER COUNT */
-app.get("/api/user-count", async (req, res) => {
+app.get("https://momn-2pn6.onrender.com", async (req, res) => {
   const count = await User.countDocuments();
   res.json({ count });
 });
 
 /* MESSAGES */
-app.get("/messages", async (req, res) => {
+app.get("https://momn-2pn6.onrender.com", async (req, res) => {
   jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
   const msgs = await Message.find().sort({ time: 1 });
   res.json(msgs);
