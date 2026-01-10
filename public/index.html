@@ -11,10 +11,9 @@
 
   <input id="email" placeholder="Email" />
   <div class="password-wrap">
-  <input id="password" type="password" placeholder="Password">
-  <span onclick="togglePass()">Show</span>
-</div>
-
+    <input id="password" type="password" placeholder="Password">
+    <span onclick="togglePass()">Show</span>
+  </div>
 
   <button onclick="login()">Login</button>
 
@@ -24,8 +23,10 @@
 </div>
 
 <script>
+const BASE_URL = "https://momn-2pn6.onrender.com"; // Render backend
+
 async function login() {
-  const res = await fetch("https://momn-2pn6.onrender.com/api/login", {
+  const res = await fetch(`${BASE_URL}/api/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -41,7 +42,6 @@ async function login() {
 
   document.querySelector(".login-box").classList.add("fade-out");
   setTimeout(() => location.href = "chat.html", 300);
-
 }
 
 function togglePass() {
