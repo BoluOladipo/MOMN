@@ -7,7 +7,7 @@
 <body>
 
 <script>
-if (!localStorage.token) location.href = "index.html";
+if (!localStorage.token) location.href = "login.html";
 </script>
 
 <div class="chat-container">
@@ -29,9 +29,12 @@ if (!localStorage.token) location.href = "index.html";
 
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-const socket = io(https://momn-2pn6.onrender.com {
+const BASE_URL = "https://momn-2pn6.onrender.com"; // Render backend
+
+// Connect socket
+const socket = io(BASE_URL, {
   auth: { token: localStorage.token }
 });
 
@@ -42,32 +45,33 @@ const userNames = {
 };
 
 let myEmail = "";
-
-// Fetch logged-in email from token
 const tokenPayload = JSON.parse(atob(localStorage.token.split('.')[1]));
 myEmail = tokenPayload.email;
 
-fetch("https://momn-2pn6.onrender.com/messages", {
+// Fetch messages
+fetch(`${BASE_URL}/messages`, {
   headers: { authorization: localStorage.token }
 })
 .then(r => r.json())
 .then(ms => ms.forEach(addMessage));
 
+// Listen for new messages
 socket.on("receive", addMessage);
 
+// Send message
 function send() {
   if (!text.value.trim()) return;
   socket.emit("send", text.value);
   text.value = "";
 }
 
-
+// Display message
 function addMessage(m) {
   const div = document.createElement("div");
   const isMe = m.sender === myEmail;
 
   div.className = `msg ${isMe ? "me" : "other"}`;
-  
+
   const time = new Date(m.time);
   const hours = time.getHours().toString().padStart(2,'0');
   const minutes = time.getMinutes().toString().padStart(2,'0');
@@ -79,16 +83,17 @@ function addMessage(m) {
     <div class="bubble">
       <div class="meta"><span>${senderName}</span></div>
       <div>${m.text}</div>
-     <div class="meta"> <span>${timestamp}</span></div>
+      <div class="meta"><span>${timestamp}</span></div>
     </div>
   `;
   messages.appendChild(div);
   div.scrollIntoView();
 }
 
+// Logout
 document.getElementById("logoutBtn").onclick = () => {
   localStorage.removeItem("token");
-  location.href = "index.html";
+  location.href = "login.html";
 };
 </script>
 
