@@ -34,7 +34,7 @@ const Message = mongoose.model("Message", new mongoose.Schema({
 
 
 /* SIGNUP */
-app.post("https://momn-2pn6.onrender.com/api/signup", async (req, res) => {
+app.post("/api/signup", async (req, res) => {
   const { email, password } = req.body;
 
   const count = await User.countDocuments();
@@ -49,7 +49,7 @@ app.post("https://momn-2pn6.onrender.com/api/signup", async (req, res) => {
 });
 
 /* LOGIN */
-app.post("https://momn-2pn6.onrender.com/api/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) return res.sendStatus(401);
@@ -62,13 +62,13 @@ app.post("https://momn-2pn6.onrender.com/api/login", async (req, res) => {
 });
 
 /* USER COUNT */
-app.get("https://momn-2pn6.onrender.com/api/user-count", async (req, res) => {
+app.get("/api/user-count", async (req, res) => {
   const count = await User.countDocuments();
   res.json({ count });
 });
 
 /* MESSAGES */
-app.get("https://momn-2pn6.onrender.com/messages", async (req, res) => {
+app.get("/messages", async (req, res) => {
   jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
   const msgs = await Message.find().sort({ time: 1 });
   res.json(msgs);
@@ -114,9 +114,6 @@ io.on("connection", socket => {
   socket.on("stopTyping", () => socket.broadcast.emit("stopTyping"));
 });
 
-const PORT = parseInt(process.env.PORT) || 3000; // fallback to 3000 locally
-
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
+server.listen(process.env.PORT, () =>
+  console.log("Server running on", process.env.PORT)
+);
