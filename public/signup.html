@@ -17,15 +17,17 @@
 </div>
 
 <script>
+const BASE_URL = "https://momn-2pn6.onrender.com"; // Render backend
+
 async function signup() {
-  const res = await fetch("https://momn-2pn6.onrender.com/api/signup", {
+  const res = await fetch(`${BASE_URL}/api/signup`, {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify({ email: email.value, password: password.value })
   });
 
   if (!res.ok) return alert("Signup failed");
-  location.href = "index.html";
+  location.href = "login.html";
 }
 </script>
 </body>
