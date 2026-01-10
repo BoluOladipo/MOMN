@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<script>
+if (!localStorage.token) location.href = "index.html";
+</script>
+
+<div class="chat-container">
+
+  <!-- HEADER -->
+  <div class="chat-header">
+    <span>I💖U Chat</span>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <!-- MESSAGES -->
+  <div id="messages" class="chat-body"></div>
+
+  <!-- INPUT -->
+  <div class="chat-input">
+    <input id="text" placeholder="Type a message..." />
+    <button onclick="send()">Send</button>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io({
+  auth: { token: localStorage.token }
+});
+
+// Map emails to display names
+const userNames = {
+  "boluemmanuel071@gmail.com": "ZINO🤟🤟🤟😎😎😎😎😎",
+  "boluoladipo246@gmail.com": "MOMN 💓❤️‍🔥❤️‍🔥❣️💖💖💝💝"
+};
+
+let myEmail = "";
+
+// Fetch logged-in email from token
+const tokenPayload = JSON.parse(atob(localStorage.token.split('.')[1]));
+myEmail = tokenPayload.email;
+
+fetch("/messages", {
+  headers: { authorization: localStorage.token }
+})
+.then(r => r.json())
+.then(ms => ms.forEach(addMessage));
+
+socket.on("receive", addMessage);
+
+function send() {
+  if (!text.value.trim()) return;
+  socket.emit("send", text.value);
+  text.value = "";
+}
+
+
+function addMessage(m) {
+  const div = document.createElement("div");
+  const isMe = m.sender === myEmail;
+
+  div.className = `msg ${isMe ? "me" : "other"}`;
+  
+  const time = new Date(m.time);
+  const hours = time.getHours().toString().padStart(2,'0');
+  const minutes = time.getMinutes().toString().padStart(2,'0');
+  const timestamp = `${hours}:${minutes}`;
+
+  const senderName = userNames[m.sender] || m.sender;
+
+  div.innerHTML = `
+    <div class="bubble">
+      <div class="meta"><span>${senderName}</span></div>
+      <div>${m.text}</div>
+     <div class="meta"> <span>${timestamp}</span></div>
+    </div>
+  `;
+  messages.appendChild(div);
+  div.scrollIntoView();
+}
+
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.removeItem("token");
+  location.href = "index.html";
+};
+</script>
+
+</body>
+</html>

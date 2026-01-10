@@ -1,0 +1,177 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Background with blur */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("photo_2026-01-07_09-09-23.jpg") no-repeat center center fixed;
+  background-size: cover;
+  filter: blur(6px); /* adjust the blur here */
+  z-index: -1; /* behind all content */
+}
+
+/* ---------- CENTER LOGIN/SIGNUP ---------- */
+.center {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.login-box {
+  background:#fff;
+  padding:30px;
+  width:320px;
+  border-radius:10px;
+}
+
+.login-box h2 {
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.login-box input {
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.password-wrap { position:relative }
+.password-wrap span {
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+}
+
+.login-box button {
+  width:100%;
+  padding:12px;
+  margin-top:20px;
+  background:#075e54;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.login-box p {
+  text-align:center;
+  margin-top:15px;
+  cursor:pointer;
+  color:#075e54;
+}
+
+.chat-container {
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.chat-header {
+  background:#075e54;
+  color:#fff;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.chat-body {
+  flex:1;
+  padding:10px;
+  overflow-y:auto;
+}
+
+.msg { display:flex; margin:8px }
+.msg.me { justify-content:flex-end }
+.msg.other { justify-content:flex-start }
+
+.bubble {
+  max-width: 65%;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.bubble .meta:first-child {
+  font-size: 12px;
+  color: #075e54; /* optional: differentiate name color */
+  margin-bottom: 6px; /* space between name and message */
+}
+
+.bubble div:nth-child(2) { /* the message text */
+  margin-bottom: 6px; /* space between message and timestamp */
+  word-wrap: break-word;
+}
+
+.bubble .meta:last-child {
+  font-size: 15px;
+  color: gray;
+  text-align: right; /* timestamp aligned to the right */
+}
+
+
+.me .bubble { background:#dcf8c6 }
+.other .bubble { background:#fff }
+
+.media {
+  max-width:100%;
+  margin-top:6px;
+  border-radius:6px;
+}
+
+.meta {
+  font-size:10px;
+  color:gray;
+  text-align:right;
+}
+
+.chat-input {
+  display:flex;
+  padding:10px;
+  background:#f0f0f0;
+}
+
+.chat-input input {
+  flex:1;
+  padding:10px;
+}
+
+
+/* Styled Logout Button */
+#logoutBtn {
+  background: #4dffa6;           /* Bright red for attention */
+  color: white;                   /* White text */
+  border: none;                   /* Remove default border */
+  border-radius: 6px;             /* Rounded corners */
+  padding: 8px 16px;              /* Some padding */
+  font-weight: bold;              /* Bold text */
+  cursor: pointer;                /* Pointer on hover */
+  transition: all 0.3s ease;      /* Smooth hover effects */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow */
+}
+
+#logoutBtn:hover {
+  background: #e60000;            /* Darker red on hover */
+  transform: translateY(-2px);    /* Slight lift */
+  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+#logoutBtn:active {
+  transform: translateY(0);       /* Reset on click */
+  box-shadow: 0 3px 4px rgba(0,0,0,0.1);
+}

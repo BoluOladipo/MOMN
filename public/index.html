@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="center auth-page">
+
+<div class="login-box animate">
+  <h2>Welcome Back</h2>
+
+  <input id="email" placeholder="Email" />
+  <div class="password-wrap">
+  <input id="password" type="password" placeholder="Password">
+  <span onclick="togglePass()">Show</span>
+</div>
+
+
+  <button onclick="login()">Login</button>
+
+  <p class="switch" onclick="location.href='signup.html'">
+    Create an account
+  </p>
+</div>
+
+<script>
+async function login() {
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  });
+
+  if (!res.ok) return alert("Invalid login");
+
+  const data = await res.json();
+  localStorage.token = data.token;
+
+  document.querySelector(".login-box").classList.add("fade-out");
+  setTimeout(() => location.href = "chat.html", 300);
+
+}
+
+function togglePass() {
+  password.type = password.type === "password" ? "text" : "password";
+}
+</script>
+
+</body>
+</html>
