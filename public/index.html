@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Resume Evaluator</title>
+    <style>
+    /* Reset + Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      animation: fadeDown 1s ease-in-out;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px 30px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      animation: scaleIn 0.8s ease-in-out;
+      transition: all 0.3s;
+    }
+
+    form:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    input[type="text"]:focus {
+      box-shadow: 0 0 10px #00c6ff, 0 0 20px #0072ff;
+    }
+
+    button {
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.4s;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #ff4b2b, #ff416c);
+      transform: scale(1.05);
+    }
+
+    h2 {
+      margin-top: 40px;
+      font-size: 1.8rem;
+      animation: fadeDown 1s ease-in-out;
+    }
+
+    #result {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 700px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    #downloadBtn {
+      margin-top: 20px;
+      display: none;
+      animation: bounceIn 1s ease-in-out;
+    }
+
+    /* Animations */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Resume Evaluator</h1>
+
+  <form id="uploadForm">
+    <a href="login.html">Target Occupation:</a>
+    <input type="text" id="occupation" name="occupation" required><br><br>
+
+    <label>Upload Resume (PDF/TXT):</label>
+    <input type="file" id="resume" name="resume" accept=".pdf,.txt" required><br><br>
+
+    <button type="submit">Analyze Resume</button>
+  </form>
+
+  <h2>Analysis Result</h2>
+  <pre id="result"></pre>
+
+  <button id="downloadBtn" style="display:none;">Download Improved Resume</button>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const resultDiv = document.getElementById("result");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("occupation", document.getElementById("occupation").value);
+      formData.append("resume", document.getElementById("resume").files[0]);
+
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+     if (data.ok) {
+  resultDiv.innerHTML = `
+    <h3>Role: ${data.analysis.role}</h3>
+    <p><strong>Score:</strong> ${data.analysis.score}</p>
+    <p><strong>Summary:</strong> ${data.analysis.summary}</p>
+    
+    <h4>Strengths:</h4>
+    <ul>${data.analysis.strengths.map(s => `<li>${s}</li>`).join("")}</ul>
+
+    <h4>Weaknesses:</h4>
+    <ul>${data.analysis.weaknesses.map(w => `<li>${w}</li>`).join("")}</ul>
+
+    <h4>Rewritten Resume:</h4>
+    <pre style="white-space:pre-wrap;">${data.updatedResumeText}</pre>
+  `;
+
+  downloadBtn.style.display = "block";
+
+  // Save data for download
+  window.resumeData = {
+    updatedText: data.updatedResumeText,
+    filename: data.suggestedFilename
+  };
+
+      } else {
+        resultDiv.textContent = "❌ Error: " + data.error;
+      }
+    });
+
+    downloadBtn.addEventListener("click", async () => {
+      const res = await fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(window.resumeData)
+      });
+
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = window.resumeData.filename + ".docx";
+      link.click();
+    });
+  </script>
+</body>
+</html>
