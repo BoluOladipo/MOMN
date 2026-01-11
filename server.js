@@ -5,10 +5,23 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const { Server } = require("socket.io");
+const cors = require("cors");
+
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+app.use(cors({
+  origin: "*",
+  credentials: true
+}));
+
 
 app.use(express.json());
 app.use(express.static("public"));
