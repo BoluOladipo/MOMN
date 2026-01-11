@@ -7,7 +7,7 @@
 <body>
 
 <script>
-if (!localStorage.token) location.href = "login.html";
+if (!localStorage.token) location.href = "index.html";
 </script>
 
 <div class="chat-container">
@@ -98,7 +98,7 @@ function addMessage(m) {
 // Logout
 document.getElementById("logoutBtn").onclick = () => {
   localStorage.removeItem("token");
-  location.href = "login.html";
+  location.href = "index.html";
 };
 </script>
 
