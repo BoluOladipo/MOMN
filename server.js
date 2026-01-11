@@ -81,8 +81,14 @@ app.get("/api/user-count", async (req, res) => {
 });
 
 /* MESSAGES */
-app.get("/messages", async (req, res) => {
+app.get("/api/messages", async (req, res) => {
+
+  try {
   jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
+} catch {
+  return res.sendStatus(401);
+}
+
   const msgs = await Message.find().sort({ time: 1 });
   res.json(msgs);
 });
