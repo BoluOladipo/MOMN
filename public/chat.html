@@ -34,9 +34,13 @@ if (!localStorage.token) location.href = "login.html";
 const BASE_URL = "https://momn-2pn6.onrender.com"; // Render backend
 
 // Connect socket
-const socket = io(BASE_URL, {
-  auth: { token: localStorage.token }
+const socket = io("https://momn-2pn6.onrender.com", {
+  auth: {
+    token: localStorage.token
+  },
+  transports: ["websocket"]
 });
+
 
 // Map emails to display names
 const userNames = {
@@ -49,9 +53,10 @@ const tokenPayload = JSON.parse(atob(localStorage.token.split('.')[1]));
 myEmail = tokenPayload.email;
 
 // Fetch messages
-fetch(`${BASE_URL}/messages`, {
+fetch("https://momn-2pn6.onrender.com/api/messages", {
   headers: { authorization: localStorage.token }
 })
+
 .then(r => r.json())
 .then(ms => ms.forEach(addMessage));
 
