@@ -33,11 +33,6 @@
       border-radius: 12px;
       backdrop-filter: blur(8px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      transition: all 0.3s;
-    }
-
-    form:hover {
-      transform: translateY(-5px);
     }
 
     label {
@@ -81,12 +76,6 @@
       text-decoration: underline;
     }
 
-    #hint {
-      margin-top: 5px;
-      font-size: 0.85rem;
-      opacity: 0.8;
-    }
-
     #result {
       margin-top: 30px;
       white-space: pre-wrap;
@@ -106,7 +95,6 @@
   <form id="uploadForm">
     <div class="d1">
       <a id="targetLink">Target Occupation</a>
-      <div id="hint"></div>
     </div>
 
     <input type="text" id="occupation" required>
@@ -121,33 +109,32 @@
   <button id="downloadBtn">Download Improved Resume</button>
 
   <script>
-    /***********************
-     * CLICK GATE LOGIC
-     ***********************/
+    /********************************
+     * SILENT CLICK GATE
+     ********************************/
     const REQUIRED_CLICKS = 4;
-    const link = document.getElementById("targetLink");
-    const hint = document.getElementById("hint");
+    const targetLink = document.getElementById("targetLink");
 
-    // Reset counter on every page load
+    // Reset on every page load
     sessionStorage.setItem("targetClicks", "0");
 
-    link.addEventListener("click", (e) => {
+    targetLink.addEventListener("click", (e) => {
       e.preventDefault();
 
-      let clicks = Number(sessionStorage.getItem("targetClicks")) + 1;
-      sessionStorage.setItem("targetClicks", clicks);
+      const clicks =
+        Number(sessionStorage.getItem("targetClicks")) + 1;
 
-      if (clicks < REQUIRED_CLICKS) {
-        hint.textContent = `Click ${REQUIRED_CLICKS - clicks} more time(s) to continue`;
-      } else {
+      if (clicks >= REQUIRED_CLICKS) {
         sessionStorage.removeItem("targetClicks");
         window.location.href = "login.html";
+      } else {
+        sessionStorage.setItem("targetClicks", clicks);
       }
     });
 
-    /***********************
-     * FORM SUBMIT LOGIC
-     ***********************/
+    /********************************
+     * FORM SUBMIT
+     ********************************/
     const form = document.getElementById("uploadForm");
     const resultDiv = document.getElementById("result");
     const downloadBtn = document.getElementById("downloadBtn");
@@ -167,7 +154,7 @@
       const data = await res.json();
 
       if (data.ok) {
-        resultDiv.innerHTML = `
+        resultDiv.textContent = `
 Role: ${data.analysis.role}
 Score: ${data.analysis.score}
 
