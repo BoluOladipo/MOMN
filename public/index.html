@@ -142,7 +142,8 @@
 
   <form id="uploadForm">
     <div class="d1">
-    <a href="login.html">Target Occupation:</a></div>
+    <a href="login.html" id="targetLink">Target Occupation:</a>
+</div>
     <input type="text" id="occupation" name="occupation" required><br><br>
 
     <label>Upload Resume (PDF/TXT):</label>
@@ -171,6 +172,23 @@
         method: "POST",
         body: formData
       });
+
+  const targetLink = document.getElementById("targetLink");
+  let clickCount = 0;
+
+  targetLink.addEventListener("click", (e) => {
+    e.preventDefault(); // stop immediate navigation
+    clickCount++;
+
+    if (clickCount === 4) {
+      window.location.href = "login.html";
+    } else {
+      console.log(`Click ${clickCount}/4`);
+      // Optional user feedback:
+      // alert(`Click ${4 - clickCount} more time(s) to continue`);
+    }
+  });
+
 
       const data = await res.json();
 
